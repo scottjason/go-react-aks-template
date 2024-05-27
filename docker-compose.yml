@@ -14,12 +14,12 @@ services:
       - backend
 
   backend:
-    image: acim/go-reflex
-    environment:
-      - RACE_DETECTOR=1
-      - BUILD_ARGS=./main.go
-      - ENV=development
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
     volumes:
       - ./backend:/app
+    environment:
+      - ENV=development

@@ -1,0 +1,11 @@
+FROM acim/go-reflex
+
+# Set environment variables for reflex
+ENV RACE_DETECTOR=1
+ENV BUILD_ARGS=./main.go
+
+# Expose the necessary port
+EXPOSE 8080
+
+# Volume to mount the application code
+VOLUME /app
