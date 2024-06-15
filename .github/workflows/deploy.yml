@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
@@ -12,6 +15,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -31,11 +39,6 @@ jobs:
       - name: Set up Kubernetes tools
         uses: azure/setup-kubectl@v1
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Set up AKS context
         run: az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER }}
 
@@ -45,10 +48,11 @@ jobs:
       - name: Create Kubernetes secret for PostgreSQL
         run: |
           kubectl create secret generic postgres-secret \
-            --from-literal=POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-            --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-            --from-literal=POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-            --from-literal=POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            --from-literal=PGHOST=${{ secrets.PGHOST }} \
+            --from-literal=PGUSER=${{ secrets.PGUSER }} \
+            --from-literal=PGPORT=${{ secrets.PGPORT }} \
+            --from-literal=PGDATABASE=${{ secrets.PGDATABASE }} \
+            --from-literal=PGPASSWORD=${{ secrets.PGPASSWORD }}
 
       - name: Apply PostgreSQL Deployment
         run: kubectl apply -f k8s/postgres-deployment.yml
@@ -58,3 +62,6 @@ jobs:
 
       - name: Deploy Frontend
         run: kubectl apply -f k8s/frontend-deployment.yml
+
+      - name: Azure Logout
+        run: az logout
