@@ -1,22 +1,17 @@
-# Use the Go 1.20 image as the base
 FROM golang:1.20-alpine AS base
 
-# Install necessary packages
 RUN apk add --no-cache gcc musl-dev git
 
-# Install reflex for hot reloading
 RUN go install github.com/cespare/reflex@latest
 
-# Set working directory
 WORKDIR /app
 
-# Copy go.mod and go.sum
 COPY go.mod go.sum ./
 
-# Download dependencies
 RUN go mod download
 
-# Copy the rest of the application code
 COPY . .
 
-# Copy the reflex configuration
+COPY reflex.conf /app/reflex.conf
+
+CMD ["reflex", "-c", "reflex.conf"]
