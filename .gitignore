@@ -52,3 +52,6 @@ Thumbs.db
 # Miscellaneous
 *.pem
 
+
+# K8s Secrets
+k8s/postgres-secret.yml
