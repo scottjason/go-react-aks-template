@@ -18,13 +18,6 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: POSTGRES_HOST
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_HOST
-        - name: POSTGRES_PORT
-          value: "5432"
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
@@ -40,6 +33,11 @@ spec:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_DB
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_HOST
 ---
 apiVersion: v1
 kind: Service

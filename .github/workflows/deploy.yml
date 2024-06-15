@@ -53,8 +53,8 @@ jobs:
       - name: Apply PostgreSQL Deployment
         run: kubectl apply -f k8s/postgres-deployment.yml
 
-      - name: Apply Backend Deployment
+      - name: Deploy Backend
         run: kubectl apply -f k8s/backend-deployment.yml
 
-      - name: Apply Frontend Deployment
+      - name: Deploy Frontend
         run: kubectl apply -f k8s/frontend-deployment.yml
