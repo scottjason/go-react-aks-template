@@ -39,7 +39,20 @@ jobs:
     - name: Set up AKS context
       run: az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER }}
 
-    - name: Deploy to AKS
+    - name: Create Kubernetes secret for PostgreSQL
       run: |
-        kubectl apply -f k8s/frontend-deployment.yml
-        kubectl apply -f k8s/backend-deployment.yml
+        kubectl delete secret postgres-secret --ignore-not-found
+        kubectl create secret generic postgres-secret \
+          --from-literal=POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+          --from-literal=POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+          --from-literal=POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+
+    - name: Deploy PostgreSQL
+      run: kubectl apply -f k8s/postgres-deployment.yml
+
+    - name: Deploy Backend
+      run: kubectl apply -f k8s/backend-deployment.yml
+
+    - name: Deploy Frontend
+      run: kubectl apply -f k8s/frontend-deployment.yml
