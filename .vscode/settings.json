@@ -3,4 +3,3 @@
     "go.lintFlags": ["run"],
     "go.lintOnSave": "package"
   }
-  
