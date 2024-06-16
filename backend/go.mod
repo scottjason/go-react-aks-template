@@ -1,6 +1,6 @@
 module book-review-platform-backend
 
-go 1.18
+go 1.22.3
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect

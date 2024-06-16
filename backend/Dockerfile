@@ -1,21 +1,16 @@
-FROM golang:1.20-alpine AS builder
-
-WORKDIR /app
+FROM golang:1.22.3-alpine AS builder
 
 RUN apk add --no-cache gcc musl-dev git
 
+WORKDIR /app
+
 COPY go.mod go.sum ./
+
 RUN go mod download
 
 COPY . .
 
-RUN GOARCH=amd64 GOOS=linux go build -o main .
-
-FROM alpine:3.14
-
-WORKDIR /app
-
-COPY --from=builder /app/main /app/
+RUN go build -o main .
 
 EXPOSE 8080
 
